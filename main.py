@@ -12,7 +12,7 @@ from random import randint, choice
 from sys import exit
 from enum import Enum
 
-
+print('a')
 
 #constant
 DISPLAY_WIDTH = 800
