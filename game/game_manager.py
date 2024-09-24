@@ -4,7 +4,7 @@ from .input_manager import InputManager
 from .render_manager import RenderManager
 
 class GameManager():
-    def __init__(self, screen):
+    def __init__(self, screen, scene_list):
         self.screen = screen
         self.scene_manager = SceneManager(scene_list)
         self.input_manager = InputManager()

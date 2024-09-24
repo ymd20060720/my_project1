@@ -1,7 +1,7 @@
 import pygame
 import sys
 from game.game_manager import GameManager
-from game.constants import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, TITLE
+from game.constants import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, TITLE, SCENE_LIST
 
 class Game:
     def __init__(self):
@@ -9,7 +9,7 @@ class Game:
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption(TITLE)
         self.clock = pygame.time.Clock()
-        self.game_manager = GameManager(self.screen)
+        self.game_manager = GameManager(self.screen, self.scene_list)
 
     def run(self):
         running = True
