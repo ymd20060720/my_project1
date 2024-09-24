@@ -3,5 +3,5 @@ from .game_manager import GameManager
 from .scene_manager import SceneManager
 from .input_manager import InputManager
 from .render_manager import RenderManager
-import constants
+#import constants
 # ... 他のManagerのインポート

@@ -1,12 +1,13 @@
 import pygame
 import sys
-from game.game_manager import GameManager
+from game import GameManager, SceneManager, InputManager, RenderManager
 from game.constants import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, TITLE, SCENE_LIST
 
 class Game:
     def __init__(self):
         pygame.init()
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+        self.scene_list = SCENE_LIST
         pygame.display.set_caption(TITLE)
         self.clock = pygame.time.Clock()
         self.game_manager = GameManager(self.screen, self.scene_list)

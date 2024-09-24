@@ -8,3 +8,8 @@ class SceneManager():
     def get_current_scene(self):
         return self.current_scene
     
+def test():
+    print('a')
+
+if __name__ == '__main__':
+    test()

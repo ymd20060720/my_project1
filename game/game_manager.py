@@ -16,13 +16,19 @@ class GameManager():
         print('handle_event')
     def update(self):
         self.input_manager.update()
-        current_scene = self.scene_manager.get_current_scene()
-        current_scene.update()
+        self.current_scene = self.scene_manager.get_current_scene()
         print('update')
 
     def draw(self):
         self.render_manager.clear
-        current_scene = self.scene_manager.get_current_scene()
-        current_scene.draw(self.render_manager)
+        self.render_manager.draw()
         self.render_manager.present()
         print('draw')
+
+#単体テストで実行するときは
+#python -m game.game_manager
+def test():
+    print('a')
+
+if __name__ == '__main__':
+    test()
