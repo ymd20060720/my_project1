@@ -1,0 +1,32 @@
+class GameManager:
+    def __init__(self, screen):
+        self.screen = screen
+        self.scene_manager = SceneManager(self)
+        self.input_manager = InputManager()
+        self.render_manager = RenderManager(screen)
+        self.audio_manager = AudioManager()
+        self.resource_manager = ResourceManager()
+        self.ui_manager = UIManager(self)
+        self.entity_manager = EntityManager()
+        self.battle_manager = BattleManager(self)
+        self.map_manager = MapManager()
+        self.card_manager = CardManager()
+        self.save_manager = SaveManager()
+
+    def update(self):
+        self.input_manager.update()
+        current_scene = self.scene_manager.get_current_scene()
+        current_scene.update()
+        self.entity_manager.update()
+        self.ui_manager.update()
+
+    def draw(self):
+        self.render_manager.clear()
+        current_scene = self.scene_manager.get_current_scene()
+        current_scene.draw(self.render_manager)
+        self.ui_manager.draw(self.render_manager)
+        self.render_manager.present()
+
+    def handle_event(self, event):
+        self.input_manager.handle_event(event)
+        # 他の必要なイベント処理
