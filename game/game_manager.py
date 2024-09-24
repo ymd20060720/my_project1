@@ -1,10 +1,12 @@
 import pygame
-import constants
+from .scene_manager import SceneManager
+from .input_manager import InputManager
+from .render_manager import RenderManager
 
 class GameManager():
     def __init__(self, screen):
         self.screen = screen
-        self.scene_manager = SceneManager(self)
+        self.scene_manager = SceneManager(scene_list)
         self.input_manager = InputManager()
         self.render_manager = RenderManager(screen)
 
