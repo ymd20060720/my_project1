@@ -10,7 +10,7 @@ class SceneManager():
 
     def __init__(self, scene_list):
         print('scene_manager initialize')
-        self.scenes = [self.Scene(scene_list[i][0],scene_list[i][1]) for i in range(len(scene_list))]
+        self.scenes = [self.Scene(key,value) for key, value in SCENE_LIST.items()]
         self.current_scene = self.scenes[0]
         self.next_scene = self.scenes[1]
         self.previous_scene = None
