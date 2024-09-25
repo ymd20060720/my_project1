@@ -34,9 +34,11 @@ classDiagram
         +load()
     }
     class Scene {
-        +scene_data
-        +get_serializable_state()
-        +set_state(state)
+        -name: str
+        -image: pygame.image.load
+    }
+    class Data{
+        -path
     }
     Main --> GameManager
     GameManager --> SceneManager
@@ -44,6 +46,4 @@ classDiagram
     GameManager --> RenderManager
     GameManager --> SaveLoadManager
     SceneManager --> Scene
-    RenderManager ..> Scene
-    SaveLoadManager ..> SceneManager
-    SaveLoadManager ..> InputManager
+    SaveLoadManager --> Data
