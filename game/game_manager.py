@@ -6,17 +6,22 @@ from .render_manager import RenderManager
 class GameManager():
     def __init__(self, screen, scene_list):
         self.screen = screen
+        self.scene_list = scene_list
         self.scene_manager = SceneManager(scene_list)
-        self.input_manager = InputManager()
+        self.input_manager = InputManager(self.scene_manager.scenes)
         self.render_manager = RenderManager(screen)
 
     def handle_event(self,event):
-        self.input_manager.handle_event(event)
-        # 他の必要なイベント処理
+        self.happened_event = self.input_manager.handle_event(event)
+        if type(self.happened_event) == (self.scene_manager.Scene):
+            self.scene_manager.put_next_scene(self.happened_event)
         print('handle_event')
+
     def update(self):
-        self.input_manager.update()
-        self.current_scene = self.scene_manager.get_current_scene()
+        #self.input_manager.update()
+        self.next_scene = self.scene_manager.get_next_scene()
+        self.scene_manager.update()
+        self.render_manager.update(self.next_scene)
         print('update')
 
     def draw(self):
