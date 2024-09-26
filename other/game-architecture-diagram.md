@@ -1,3 +1,4 @@
+:::mermaid
 classDiagram
     class Main {
         -game_manager
@@ -21,7 +22,7 @@ classDiagram
         +change_scene(next_scene: Scene)
     }
     class InputManager {
-        +handle_events()
+        +handle_events() -> event_happened:list
         +get_input_state()
     }
     class RenderManager {
@@ -47,3 +48,4 @@ classDiagram
     GameManager --> SaveLoadManager
     SceneManager --> Scene
     SaveLoadManager --> Data
+:::

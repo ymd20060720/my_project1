@@ -16,10 +16,7 @@ class Game:
         running = True
         while running:
             # イベント処理
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
-                self.game_manager.handle_event(event)
+            self.game_manager.handle_event()
 
             # ゲーム状態の更新
             self.game_manager.update()
