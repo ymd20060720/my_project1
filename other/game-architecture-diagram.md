@@ -1,6 +1,7 @@
 :::mermaid
 classDiagram
-    class Main {
+    class Game {
+        -clock
         -game_manager
         +run()
     }
@@ -18,16 +19,20 @@ classDiagram
     class SceneManager {
         -scenes : Scene
         -current_scene: Scene
-        +get_current_scene()
+        +get_current_scene() -> current_scene
         +change_scene(next_scene: Scene)
     }
     class InputManager {
-        +handle_events() -> event_happened:list
-        +get_input_state()
+        -scenes: Scene
+        +handle_event() -> events_happened:list
+        +handle_event_scene(event)
+        +get_input_state() -> events_happened:list
     }
     class RenderManager {
         -screen: pygame.display.set_mode
-        +draw_scene(scene: Scene)
+        +update(scene: Scene)
+        +draw()
+        +clear()
     }
     class SaveLoadManager {
         -data: Data
@@ -41,7 +46,7 @@ classDiagram
     class Data{
         -path
     }
-    Main --> GameManager
+    Game --> GameManager
     GameManager --> SceneManager
     GameManager --> InputManager
     GameManager --> RenderManager

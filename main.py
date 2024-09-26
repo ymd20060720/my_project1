@@ -21,6 +21,10 @@ class Game:
             # ゲーム状態の更新
             self.game_manager.update()
 
+            #quitか確認
+            if self.game_manager.running == False:
+                running = False
+
             # 画面描画
             self.screen.fill((0, 0, 0))  # 画面を黒でクリア
             self.game_manager.draw()
