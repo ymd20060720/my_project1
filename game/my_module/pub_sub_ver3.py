@@ -54,7 +54,7 @@ class Broker:
             cls._instance.events_subscribers = {}  # type: ignore # type: Dict[str, List['Subscriber']]
         return cls._instance
 
-    def event_add(self, event:dict) -> None:
+    def event_add(self, event_name:str) -> None:
         """
         Add a new event to the broker.
 
@@ -62,11 +62,11 @@ class Broker:
             event_name (str): The name of the event to add.
             event_content (Any): The content of the event.
         """
-        event_name = str(event.keys())
-        event_content = event.values()
         if event_name not in self.events:
-            self.events[event_name] = event_content
+            self.events[event_name] = None
             self.events_subscribers[event_name] = []
+        if self.Is_in_events(event_name):
+            pass
 
     def subscriber_add(self, event_name: str, subscriber: 'Subscriber') -> None:
         """
@@ -114,10 +114,12 @@ class Broker:
         """
         if self.Is_not_in_events:pass
         else:
-            del self.events[event_name]
+            #del self.events[event_name]
+            self.events.pop(event_name)
         if self.Is_not_in_events_subscribers:pass
         else:
-            del self.events_subscribers[event_name]
+            #del self.events_subscribers[event_name]
+            self.events_subscribers.pop(event_name)
 
     def clear(self) -> None:
         """
@@ -126,8 +128,8 @@ class Broker:
         self.events.clear()
         self.events_subscribers.clear()
 
-    def update(self, event):
-        self.events[str(event.keys())] = event.values()
+    def update(self, event_name, event_content):
+        self.events[event_name] = event_content
 
     def Is_in_events(self, event_name: str) -> bool:
         if event_name in self.events:
@@ -163,12 +165,9 @@ class Publisher:
 
     def __init__(self):
         self.broker = Broker()
+        self.events_published = []
 
-    def make_event(self, event_name: str, event_content: Any) -> dict:
-        return {event_name:event_content}
-
-
-    def publish_event(self, event:dict) -> None:
+    def publish_event(self, event_name: str) -> None:
         """
         Publish a new event.
 
@@ -176,7 +175,8 @@ class Publisher:
             event_name (str): The name of the event to publish.
             event_content (Any): The content of the event.
         """
-        self.broker.event_add(event)
+        self.events_published.append(event_name)
+        self.broker.event_add(event_name)
 
     def unpublish(self, event_name: str) -> None:
         """
@@ -185,10 +185,17 @@ class Publisher:
         Args:
             event_name (str): The name of the event to unpublish.
         """
-        self.broker.event_remove(event_name)
+        if event_name in self.events_published:
+            self.events_published.remove(event_name)
+            self.broker.event_remove(event_name)
+        else:
+            print(f'info: {event_name} is not published')
 
-    def update(self, event):
-        self.broker.update(event)
+    def update(self, event_name, event_content):
+        if event_name in self.events_published:
+            self.broker.update(event_name, event_content)
+        else:
+            print(f'info: {event_name} is not published')
 
 
 
@@ -201,6 +208,7 @@ class Subscriber:
 
     def __init__(self):
         self.broker = Broker()
+        self.events_subscribed = []
         self.received_events = {}  # type: Dict[str, Any]
 
     def subscribe_event(self, event_name: str) -> None:
@@ -210,7 +218,10 @@ class Subscriber:
         Args:
             event_name (str): The name of the event to subscribe to.
         """
-        self.broker.subscriber_add(event_name, self)
+        if event_name not in self.events_subscribed:
+            self.broker.subscriber_add(event_name, self)
+        else:
+            print(f'info: {self} has already subscribed {event_name}')
 
     def unsubscribe(self, event_name: str) -> None:
         """
@@ -219,7 +230,10 @@ class Subscriber:
         Args:
             event_name (str): The name of the event to unsubscribe from.
         """
-        self.broker.subscriber_remove(event_name, self)
+        if event_name in self.events_subscribed:
+            self.broker.subscriber_remove(event_name, self)
+        else:
+            print(f'info: {self} is not subscribing {event_name}')
 
     def receive_event(self, event_name: str, event_content: Any) -> None:
         """
@@ -231,7 +245,7 @@ class Subscriber:
         """
         self.received_events[event_name] = event_content
 
-    def get_event(self, event_name: str) -> Any:
+    def check(self, event_name: str) -> Any:
         """
         Get the content of a received event.
 
@@ -243,20 +257,17 @@ class Subscriber:
         """
         event_content = self.received_events.get(event_name)
         if event_content is not None:
-            del self.received_events[event_name]
+            self.received_events[event_name] = None
         return event_content
 
 class InputClass:
     def __init__(self):
         self.publisher = Publisher()
         self.x = 10
-        self.event = self.publisher.make_event('x_change',self.x)
-        self.publisher.publish_event(self.event)
+        self.publisher.publish_event('x_change')
 
-    def update(self, new_number):
-        # type: (int) -> None
-        self.event[str(self.event.keys())] = new_number
-        self.publisher.update(self.event)
+    def update(self, event_name, event_content):
+        self.publisher.update(event_name, event_content)
 
 class OutputClass:
     def __init__(self):
@@ -265,7 +276,7 @@ class OutputClass:
 
     def update(self):
         # type: () -> None
-        event_content = self.subscriber.get_event('x_change')
+        event_content = self.subscriber.check('x_change')
         if event_content is not None:
             print(f'x changed to {event_content}')
         else:
@@ -279,13 +290,13 @@ def test() -> None:
     output_class.update()
     
     print("\nChanging x value:")
-    for i in range(3):
-        input_class.update(i)
+    for event_content in range(3):
+        input_class.update('x_change', event_content)
         output_class.update()
     
     print("\nUnsubscribing from 'x_change' event:")
     output_class.subscriber.unsubscribe('x_change')
-    input_class.update(10)
+    input_class.update('x_change', 10)
     output_class.update()
     
     print("\nUnpublishing 'x_change' event:")
@@ -294,12 +305,12 @@ def test() -> None:
     
     print("\nRe-subscribing to 'x_change' event:")
     output_class.subscriber.subscribe_event('x_change')
-    input_class.update(20)
+    input_class.update('x_change', 20)
     output_class.update()
     
     print("\nClearing all events and subscriptions:")
     Broker().clear()
-    input_class.update(30)
+    input_class.update('x_change', 30)
     output_class.update()
 
 if __name__ == "__main__":
