@@ -30,6 +30,8 @@ classDiagram
     }
     class RenderManager {
         -screen: pygame.display.set_mode
+        -assets
+        +load_assets(assets_path)
         +update(scene: Scene)
         +draw()
         +clear()
@@ -42,6 +44,13 @@ classDiagram
     class Scene {
         -name: str
         -image: pygame.image.load
+    }
+    class Player{
+        -name
+        -image
+        -hp
+        +change_name(name)
+        +
     }
     class Data{
         -path
