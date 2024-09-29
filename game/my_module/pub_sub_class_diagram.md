@@ -10,26 +10,32 @@ classDiagram
         +clear() -> None
         +update(event_name: str, event_content: Any) -> None
         +check(event_name: str, subscriber: Subscriber) -> Any
+        +search(event_name) -> bool
     }
     class Publisher {
         -Broker broker
         -List[str] events_published
         +publish_event(event_name: str) -> None
         +unpublish(event_name: str) -> None
+        +unpublish_all() -> None
         +update(event_name: str, event_content: Any) -> None
+        +search(event_name) -> bool
     }
     class Subscriber {
         -Broker broker
         -List[str] events_subscribed
         +subscribe_event(event_name: str) -> None
         +unsubscribe(event_name: str) -> None
+        +unsubscribe_all() -> None
         +check(event_name: str) -> Any
+        +search(event_name) -> bool
     }
     class GenericPublisher {
         -Publisher publisher
         +__init__(event_names: List[str])
         +update(event_name: str, event_content: Any) -> None
         +unpublish(event_name: str) -> None
+        +unpublish_all() -> None
     }
     class GenericSubscriber {
         -Subscriber subscriber
@@ -37,6 +43,7 @@ classDiagram
         +__init__(event_names: List[str], callback: Callable[[str, Any], None])
         +update() -> None
         +unsubscribe(event_name: str) -> None
+        +unsubscribe_all() -> None
     }
     
     Broker --* Publisher : uses

@@ -77,6 +77,12 @@ class Broker:
         if subscriber not in self.events_subscribers[event_name]:
             raise EventError(f"Subscriber not subscribed to event '{event_name}'")
         return self.events[event_name]
+    
+    def search(self, event_name) -> bool:
+        if event_name in self.events:
+            return True
+        else:
+            return False
 
 class Publisher:
     broker: Broker
@@ -96,10 +102,17 @@ class Publisher:
         self.events_published.remove(event_name)
         self.broker.event_remove(event_name)
 
+    def unpublish_all(self) -> None:
+        for event_name in self.events_published.copy():
+            self.unpublish(event_name)
+
     def update(self, event_name: str, event_content: Any) -> None:
         if event_name not in self.events_published:
             raise EventError(f"Event '{event_name}' is not published")
         self.broker.update(event_name, event_content)
+
+    def search(self, event_name) -> bool:
+        return self.broker.search(event_name)
 
 class Subscriber:
     broker: Broker
@@ -121,10 +134,17 @@ class Subscriber:
         self.broker.subscriber_remove(event_name, self)
         self.events_subscribed.remove(event_name)
 
+    def unsubscribe_all(self) -> None:
+        for event_name in self.events_subscribed.copy():
+            self.unsubscribe(event_name)
+
     def check(self, event_name: str) -> Any:
         if event_name not in self.events_subscribed:
             raise EventError(f"Not subscribed to event '{event_name}'")
         return self.broker.check(event_name, self)
+    
+    def search(self, event_name) -> bool:
+        return self.broker.search(event_name)
 
 class GenericPublisher:
     def __init__(self, event_names: List[str]):
@@ -137,6 +157,9 @@ class GenericPublisher:
 
     def unpublish(self, event_name: str) -> None:
         self.publisher.unpublish(event_name)
+
+    def unpublish_all(self) -> None:
+        self.publisher.unpublish_all()
 
 class GenericSubscriber:
     def __init__(self, event_names: List[str], callback: Callable[[str, Any], None]):
@@ -155,6 +178,9 @@ class GenericSubscriber:
 
     def unsubscribe(self, event_name: str) -> None:
         self.subscriber.unsubscribe(event_name)
+
+    def unsubscribe_all(self) -> None:
+        self.subscriber.unsubscribe_all()
 
 def run_tests():
     def clear_broker():
