@@ -12,8 +12,6 @@ Classes:
     Broker: Manages events and subscribers
     Publisher: Publishes events
     Subscriber: Subscribes to and receives events
-    InputClass: Example class that publishes events
-    OutputClass: Example class that subscribes to events
 """
 
 from typing import Dict, List, Any, Optional, Callable
